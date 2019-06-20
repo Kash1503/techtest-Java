@@ -1,8 +1,10 @@
 package com.answerdigital.colourstest.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +23,7 @@ import com.answerdigital.colourstest.repository.PeopleRepository;
 public class PeopleController {
 
     @Autowired
-    private PeopleRepository peopleRespository;
+    private PeopleRepository peopleRepository;
 
     @GetMapping
     public ResponseEntity<List<Person>> getPeople() {
@@ -31,7 +33,16 @@ public class PeopleController {
         // of people from the PeopleRepository. If there are zero
         // people returned from PeopleRepository then an empty
         // JSON array should be returned.
-        throw new NotImplementedException();
+    	
+    	List<Person> persons = peopleRepository.findAll();
+    	
+    	if (persons == null) {
+    		persons.clear();
+    		return new ResponseEntity<>(persons, HttpStatus.OK);
+    	} else {
+    		return new ResponseEntity<>(persons, HttpStatus.OK);
+    	}
+    	
     }
 
     @GetMapping("/{id}")
@@ -43,7 +54,15 @@ public class PeopleController {
         // If null is returned from the PeopleRepository with
         // the supplied id then a NotFound should be returned.
 
-        throw new NotImplementedException();
+    	Optional<Person> optionalPerson = peopleRepository.findById(id);
+    	
+    	if (optionalPerson.isPresent()) {
+    		Person person = optionalPerson.get();
+    		return new ResponseEntity<>(person, HttpStatus.OK);
+    	} else {
+    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
+    	
     }
 
     @PutMapping("/{id}")
@@ -56,6 +75,8 @@ public class PeopleController {
         // updated, the person should be returned from the endpoint.
         // If null is returned from the PeopleRepository then a
         // NotFound should be returned.
+    	
+    	
         throw new NotImplementedException();
     }
 
