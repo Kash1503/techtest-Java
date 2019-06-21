@@ -1,5 +1,6 @@
 package com.answerdigital.colourstest.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +36,8 @@ public class PeopleController {
         // JSON array should be returned.
     	
     	List<Person> persons = peopleRepository.findAll();
-    	
-    	if (persons == null) {
+    		
+    	if (persons.size() == 0) {
     		persons.clear();
     		return new ResponseEntity<>(persons, HttpStatus.OK);
     	} else {
@@ -76,8 +77,23 @@ public class PeopleController {
         // If null is returned from the PeopleRepository then a
         // NotFound should be returned.
     	
+    	Optional<Person> optionalPerson = peopleRepository.findById(id);
     	
-        throw new NotImplementedException();
+    	if (optionalPerson.isPresent()) {
+    		
+    		Person person = optionalPerson.get();
+    		
+    		person.setAuthorised(personUpdate.isAuthorised());
+    		person.setEnabled(personUpdate.isEnabled());
+    		person.setColours(personUpdate.getColours());
+    		
+    		Person updatedPerson = peopleRepository.save(person);
+    		
+    		return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
+    		
+    	} else {
+    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
     }
 
 }
